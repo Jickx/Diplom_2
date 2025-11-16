@@ -1,3 +1,4 @@
+import allure
 from faker import Faker
 
 faker = Faker()
@@ -6,6 +7,7 @@ faker = Faker()
 class UserGenerator:
 
     @staticmethod
+    @allure.step("Генерация случайных данных для пользователя")
     def generate_user():
         """Генерирует случайные данные для пользователя."""
         return {
