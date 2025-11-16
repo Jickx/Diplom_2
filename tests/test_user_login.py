@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+import allure
 import requests
 
 from data.messages import EMAIL_OR_PASSWORD_ARE_INCORRECT
@@ -7,9 +8,12 @@ from data.urls import Urls
 from helpers.user_generator import UserGenerator
 
 
+@allure.feature('Авторизация пользователя')
 class TestUserLogin:
     """Тесты для проверки функциональности авторизации пользователя через API."""
 
+    @allure.title('Авторизация зарегистрированного пользователя')
+    @allure.description('Проверяем, что зарегистрированный пользователь может успешно авторизоваться.')
     def test_login_registered_user_success(self, registered_user):
         """Проверка успешной авторизации зарегистрированного пользователя."""
         creds = {
@@ -21,6 +25,8 @@ class TestUserLogin:
         assert response.status_code == HTTPStatus.OK
         assert response.json()["success"] is True
 
+    @allure.title('Авторизация с неверным логином и паролем')
+    @allure.description('Проверяем, что пользователь не может авторизоваться с неверными учетными данными.')
     def test_login_incorrect_login_and_password(self):
         """Проверка авторизации с некорректными учетными данными."""
         incorrect_user = UserGenerator.generate_user()
