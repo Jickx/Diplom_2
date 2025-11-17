@@ -24,11 +24,12 @@ class TestUserCreation:
 
     @allure.title('Создание уже существующего пользователя')
     @allure.description('Проверяем, что нельзя создать пользователя, который уже зарегистрирован в системе.')
-    def test_create_existing_user_error(self, user):
+    def test_create_existing_user_error(self, registered_user):
         """Тест ошибки при создании пользователя, который уже существует."""
-        requests.post(Urls.CREATE_USER_URL, json=user)
 
-        response = requests.post(Urls.CREATE_USER_URL, json=user)
+        payload = registered_user["payload"]
+
+        response = requests.post(Urls.CREATE_USER_URL, json=payload)
 
         assert response.status_code == HTTPStatus.FORBIDDEN
         assert response.json()["success"] is False
