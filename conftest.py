@@ -31,7 +31,8 @@ def user():
             return
 
         try:
-            login_response = requests.post(Urls.LOGIN_USER_URL, json=login_payload)
+            with allure.step(f"POST {Urls.LOGIN_USER_URL} | логин для очистки"):
+                login_response = requests.post(Urls.LOGIN_USER_URL, json=login_payload)
             if login_response.status_code == HTTPStatus.OK:
                 access_token = login_response.json().get("accessToken")
             else:
@@ -47,7 +48,8 @@ def user():
         if access_token:
             try:
                 headers = {"Authorization": access_token}
-                delete_response = requests.delete(Urls.USER_DATA_URL, headers=headers)
+                with allure.step(f"DELETE {Urls.USER_DATA_URL} | удаление пользователя"):
+                    delete_response = requests.delete(Urls.USER_DATA_URL, headers=headers)
                 if delete_response.status_code >= 400:
                     logger.warning(
                         "Cleanup delete failed: status=%s, body=%s",
@@ -70,7 +72,8 @@ def registered_user():
     """
     with allure.step("Создание и регистрация нового пользователя"):
         payload = UserGenerator.generate_user()
-        response = requests.post(Urls.CREATE_USER_URL, json=payload)
+        with allure.step(f"POST {Urls.CREATE_USER_URL} | регистрация пользователя"):
+            response = requests.post(Urls.CREATE_USER_URL, json=payload)
         assert response.status_code == HTTPStatus.OK
         access_token = response.json().get("accessToken")
 
@@ -79,7 +82,8 @@ def registered_user():
     with allure.step("Очистка: удаление зарегистрированного пользователя"):
         if access_token:
             try:
-                delete_response = requests.delete(Urls.USER_DATA_URL, headers={"Authorization": access_token})
+                with allure.step(f"DELETE {Urls.USER_DATA_URL} | удаление пользователя"):
+                    delete_response = requests.delete(Urls.USER_DATA_URL, headers={"Authorization": access_token})
                 if delete_response.status_code >= 400:
                     logger.warning(
                         "Cleanup delete (registered_user) failed: status=%s, body=%s",

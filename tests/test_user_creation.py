@@ -26,10 +26,10 @@ class TestUserCreation:
     @allure.description('Проверяем, что нельзя создать пользователя, который уже зарегистрирован в системе.')
     def test_create_existing_user_error(self, registered_user):
         """Тест ошибки при создании пользователя, который уже существует."""
-
         payload = registered_user["payload"]
 
-        response = requests.post(Urls.CREATE_USER_URL, json=payload)
+        with allure.step("POST /api/auth/register — попытка создать уже существующего пользователя"):
+            response = requests.post(Urls.CREATE_USER_URL, json=payload)
 
         assert response.status_code == HTTPStatus.FORBIDDEN
         assert response.json()["success"] is False
@@ -41,7 +41,8 @@ class TestUserCreation:
     def test_create_user_missing_required_field_error(self, user, missing_field):
         """Тест ошибки при отсутствии одного из обязательных полей."""
         user.pop(missing_field)
-        response = requests.post(Urls.CREATE_USER_URL, json=user)
+        with allure.step("POST /api/auth/register — создание с пропуском обязательного поля"):
+            response = requests.post(Urls.CREATE_USER_URL, json=user)
 
         assert response.status_code == HTTPStatus.FORBIDDEN
         assert response.json()["success"] is False

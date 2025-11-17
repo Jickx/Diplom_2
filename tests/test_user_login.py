@@ -21,7 +21,8 @@ class TestUserLogin:
             "password": registered_user["payload"]["password"],
         }
 
-        response = requests.post(Urls.LOGIN_USER_URL, json=creds)
+        with allure.step("POST /api/auth/login — авторизация пользователя"):
+            response = requests.post(Urls.LOGIN_USER_URL, json=creds)
         assert response.status_code == HTTPStatus.OK
         assert response.json()["success"] is True
 
@@ -31,7 +32,8 @@ class TestUserLogin:
         """Проверка авторизации с некорректными учетными данными."""
         incorrect_user = UserGenerator.generate_user()
 
-        response = requests.post(Urls.LOGIN_USER_URL, json=incorrect_user)
+        with allure.step("POST /api/auth/login — авторизация с некорректными данными"):
+            response = requests.post(Urls.LOGIN_USER_URL, json=incorrect_user)
         assert response.status_code == HTTPStatus.UNAUTHORIZED
         assert response.json()["success"] is False
         assert response.json()["message"] == EMAIL_OR_PASSWORD_ARE_INCORRECT
